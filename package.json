@@ -1,0 +1,40 @@
+{
+  "name": "VoiceBot",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "repository": "git@github.com:Vagr9K/VoiceBot.git",
+  "author": "'Ruben Harutyunyan' <'harutyunyan.ruben@gmail.com'>",
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "build": "npm run lint && tsc",
+    "clean": "rimraf ./dist",
+    "lint": "tslint -c tslint.json 'src/**/*.ts'",
+    "format": "prettier --write 'src/**/*.ts'",
+    "start": "nodemon src/index.ts"
+  },
+  "dependencies": {
+    "@types/dotenv": "^6.1.0",
+    "discord.js": "discordjs/discord.js",
+    "dotenv": "^6.2.0",
+    "erlpack": "hammerandchisel/erlpack",
+    "ffmpeg-binaries": "^4.0.0",
+    "ffmpeg-static": "^2.4.0",
+    "lzma-native": "^4.0.0",
+    "node-opus": "^0.3.1",
+    "nodemon": "^1.18.10",
+    "sodium": "^3.0.2",
+    "typescript": "^3.3.3333",
+    "uws": "^100.0.1",
+    "winston": "^3.2.1",
+    "ytdl-core": "^0.29.1"
+  },
+  "devDependencies": {
+    "prettier": "^1.16.4",
+    "rimraf": "^2.6.3",
+    "tslint": "^5.13.1",
+    "tslint-config-prettier": "^1.18.0"
+  },
+  "resolutions": {
+    "lzma-native": "^4.0.0"
+  }
+}

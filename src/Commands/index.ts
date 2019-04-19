@@ -32,7 +32,7 @@ export default class CommandRunner {
     logger.info(`COMMAND_RUNNER: Left VC:${member.voice.channel.name} as per command.`);
   };
 
-  public playCommand = async (params: string, member: GuildMember) => {
+  public playURLCommand = async (params: string, member: GuildMember) => {
     if (!member.voice.channel) return;
 
     const connection = await member.voice.channel.join();
@@ -66,7 +66,7 @@ export default class CommandRunner {
     const commandMapping: ICommandTaskMapping = {
       join: this.joinCommand,
       leave: this.leaveCommand,
-      play: this.playCommand,
+      playurl: this.playURLCommand,
       ping: this.pingCommand
     };
 

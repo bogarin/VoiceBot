@@ -15,3 +15,11 @@ export interface IEventMapping {
 export interface IEventClassMapping {
   [s: string]: IEventMapping;
 }
+
+export interface IVoiceCommandDetector {
+  addOpusFrame: (id: string, opusFrames: Buffer) => void;
+}
+
+export interface IMemberMapping {
+  [id: string]: GuildMember;
+}

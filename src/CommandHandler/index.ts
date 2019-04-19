@@ -21,13 +21,13 @@ export default class CommandHandler {
     this.commandDetector = new Detector(this.voiceCommandHandler);
   }
 
-  public runCommand = (command: string, member: GuildMember) => {
+  public runCommand = (command: string, member: GuildMember, message?: Message) => {
     // Command format: COMMAND PARAMETER1 PARAMETER2 ...
     const baseCommand: string = command.split(" ").length ? command.split(" ")[0] : command;
     const parameters = command.replace(`${baseCommand} `, "");
 
     // Pass to the command handler
-    this.commandRunner.runCommand(baseCommand, parameters, member);
+    this.commandRunner.runCommand(baseCommand, parameters, member, message);
   };
 
   public commandChecker = (msgBody: string): string | null => {
@@ -53,7 +53,7 @@ export default class CommandHandler {
 
     logger.info(`COMMAND_HANDLER: Command message ${command} from ${message.guild.name}:${message.member.nickname}.`);
 
-    this.runCommand(command, message.member);
+    this.runCommand(command, message.member, message);
   };
 
   public speakingEventHandler = async (user: User, connection: VoiceConnection, member: GuildMember) => {

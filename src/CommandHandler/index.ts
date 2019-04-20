@@ -1,24 +1,30 @@
 import { GuildMember, Message, User, VoiceConnection } from "discord.js";
+import Detector from "native-voice-command-detector";
 import CommandRunner from "../Commands";
 import config from "../config";
 import BotClient from "../Discord/BotClient";
-import { IMemberMapping, IVoiceCommandDetector } from "../types";
+import { IMemberMapping } from "../types";
 import logger from "../utils/logger";
-
-// @ts-ignore
-const { Detector } = require("bindings")("detector");
 
 export default class CommandHandler {
   public commandRunner: CommandRunner;
   public prefix = config.DISCORD_BOT_PREFIX;
   public prefixRegex = new RegExp("^" + this.prefix + "(.+)$");
-  public commandDetector: IVoiceCommandDetector;
+  public commandDetector: Detector;
   public memberMapping: IMemberMapping = {};
 
   constructor(public botClient: BotClient) {
     const eventMapping = { connection: { speaking: this.speakingEventHandler } };
     this.commandRunner = new CommandRunner(botClient, null, eventMapping);
-    this.commandDetector = new Detector(this.voiceCommandHandler);
+    this.commandDetector = new Detector(
+      config.PV_MODEL_PATH,
+      config.PV_KEYWORD_PATH,
+      parseFloat(config.PV_SENSITIVITY),
+      config.GCLOUD_SPEECH_TO_TEXT_API_KEY,
+      parseInt(config.MAX_VOICE_BUFFER_TTL, 10),
+      parseInt(config.MAX_COMMAND_LENGTH, 10),
+      this.voiceCommandHandler
+    );
   }
 
   public runCommand = (command: string, member: GuildMember, message?: Message) => {
@@ -35,11 +41,8 @@ export default class CommandHandler {
     return possibleCommand ? possibleCommand.trim() : null;
   };
 
-  public voiceCommandHandler = (id: string, jsonData: string) => {
+  public voiceCommandHandler = (id: string, command: string) => {
     const member: GuildMember = this.memberMapping[id];
-    const commandData = JSON.parse(jsonData);
-
-    const command = commandData.results[0].alternatives[0].transcript;
 
     logger.info(`COMMAND_HANDLER: Voice command detected from member ${member.user.username}.`, command);
 

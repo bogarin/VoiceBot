@@ -25,6 +25,9 @@ export default class CommandRunner {
       }
     });
     logger.info(`COMMAND_RUNNER: Joined VC:${member.voice.channel.name} as per command.`);
+
+    // Workaround for https://github.com/discordjs/discord.js/issues/2929
+    await this.playURLCommand('https://www.youtube.com/watch?v=W8svHrWMC1c', member);
   };
 
   public leaveCommand = async (params: string, member: GuildMember) => {

@@ -23,6 +23,7 @@ export default class CommandHandler {
       config.GCLOUD_SPEECH_TO_TEXT_API_KEY,
       parseInt(config.MAX_VOICE_BUFFER_TTL, 10),
       parseInt(config.MAX_COMMAND_LENGTH, 10),
+      parseInt(config.MAX_COMMAND_SILENCE_LENGTH, 10),
       this.voiceCommandHandler
     );
   }

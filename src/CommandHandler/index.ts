@@ -7,11 +7,11 @@ import { IMemberMapping } from "../types";
 import logger from "../utils/logger";
 
 export default class CommandHandler {
-  public commandRunner: CommandRunner;
-  public prefix = config.DISCORD_BOT_PREFIX;
-  public prefixRegex = new RegExp("^" + this.prefix + "(.+)$");
-  public commandDetector: Detector;
-  public memberMapping: IMemberMapping = {};
+  private commandRunner: CommandRunner;
+  private prefix = config.DISCORD_BOT_PREFIX;
+  private prefixRegex = new RegExp("^" + this.prefix + "(.+)$");
+  private commandDetector: Detector;
+  private memberMapping: IMemberMapping = {};
 
   constructor(public botClient: BotClient) {
     const eventMapping = { connection: { speaking: this.speakingEventHandler } };
@@ -28,28 +28,6 @@ export default class CommandHandler {
     );
   }
 
-  public runCommand = (command: string, member: GuildMember, message?: Message) => {
-    // Command format: COMMAND PARAMETER1 PARAMETER2 ...
-    const baseCommand: string = command.split(" ").length ? command.split(" ")[0] : command;
-    const parameters = command.replace(`${baseCommand} `, "");
-
-    // Pass to the command handler
-    this.commandRunner.runCommand(baseCommand, parameters, member, message);
-  };
-
-  public commandChecker = (msgBody: string): string | null => {
-    const possibleCommand = msgBody.match(this.prefixRegex)[1];
-    return possibleCommand ? possibleCommand.trim() : null;
-  };
-
-  public voiceCommandHandler = (id: string, command: string) => {
-    const member: GuildMember = this.memberMapping[id];
-
-    logger.info(`COMMAND_HANDLER: Voice command detected from member ${member.user.username}.`, command);
-
-    this.runCommand(command, member);
-  };
-
   public messageEventHandler = async (message: Message) => {
     // Check for command message based on prefix
     const command = this.commandChecker(message.content);
@@ -60,7 +38,29 @@ export default class CommandHandler {
     this.runCommand(command, message.member, message);
   };
 
-  public speakingEventHandler = async (user: User, connection: VoiceConnection, member: GuildMember) => {
+  private runCommand = (command: string, member: GuildMember, message?: Message) => {
+    // Command format: COMMAND PARAMETER1 PARAMETER2 ...
+    const baseCommand: string = command.split(" ").length ? command.split(" ")[0] : command;
+    const parameters = command.replace(`${baseCommand} `, "");
+
+    // Pass to the command handler
+    this.commandRunner.runCommand(baseCommand, parameters, member, message);
+  };
+
+  private commandChecker = (msgBody: string): string | null => {
+    const possibleCommand = msgBody.match(this.prefixRegex)[1];
+    return possibleCommand ? possibleCommand.trim() : null;
+  };
+
+  private voiceCommandHandler = (id: string, command: string) => {
+    const member: GuildMember = this.memberMapping[id];
+
+    logger.info(`COMMAND_HANDLER: Voice command detected from member ${member.user.username}.`, command);
+
+    this.runCommand(command, member);
+  };
+
+  private speakingEventHandler = async (user: User, connection: VoiceConnection, member: GuildMember) => {
     logger.info(`COMMAND_HANDLER: Listening to ${user.username}.`);
 
     // Store the memeber data in the mapping for later reuse

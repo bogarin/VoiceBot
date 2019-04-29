@@ -8,17 +8,36 @@ import logger from "../utils/logger";
 
 export default class CommandRunner {
   constructor(
-    public botClient: BotClient,
-    public userClient: BotClient | null,
-    public eventMapping: IEventClassMapping | null
-  ) {}
-  public joinCommand = async (params: string, member: GuildMember) => {
-    if (!member.voice.channel) return;
+    private botClient: BotClient,
+    private userClient: BotClient | null,
+    private eventMapping: IEventClassMapping | null
+    ) {}
 
-    const connection = await member.voice.channel.join();
+    public runCommand = (command: string, parameters: string, member: GuildMember, message?: Message, user?: User) => {
+      logger.info(`COMMAND_RUNNER: Command: ${command}, parameters:${parameters}`);
+    
+      // Find and execute the correct command
+      const commandMapping: ICommandTaskMapping = {
+        join: this.joinCommand,
+        leave: this.leaveCommand,
+        playurl: this.playURLCommand,
+        play: this.playCommand,
+        ping: this.pingCommand
+      };
+    
+      const task = commandMapping[command];
+      if (!task) return;
+    
+      return task(parameters, member, message, user);
+    };
 
-    connection.on("speaking", (user: User, speaking: boolean) => {
-      if (!speaking) return;
+    private joinCommand = async (params: string, member: GuildMember) => {
+      if (!member.voice.channel) return;
+      
+      const connection = await member.voice.channel.join();
+      
+      connection.on("speaking", (user: User, speaking: boolean) => {
+        if (!speaking) return;
 
       if (this.eventMapping.connection && this.eventMapping.connection.speaking) {
         this.eventMapping.connection.speaking(user, connection, member);
@@ -30,14 +49,14 @@ export default class CommandRunner {
     await this.playURLCommand('https://www.youtube.com/watch?v=W8svHrWMC1c', member);
   };
 
-  public leaveCommand = async (params: string, member: GuildMember) => {
+  private leaveCommand = async (params: string, member: GuildMember) => {
     if (!member.voice.channel) return;
 
     await member.voice.channel.leave();
     logger.info(`COMMAND_RUNNER: Left VC:${member.voice.channel.name} as per command.`);
   };
 
-  public playURLCommand = async (params: string, member: GuildMember) => {
+  private playURLCommand = async (params: string, member: GuildMember) => {
     if (!member.voice.channel) return;
 
     const connection = await member.voice.channel.join();
@@ -58,7 +77,7 @@ export default class CommandRunner {
     logger.info(`COMMAND_RUNNER: Playing ${params} on VC:${member.voice.channel.name} as per command.`);
   };
 
-  public playCommand = async (params: string, member: GuildMember) => {
+  private playCommand = async (params: string, member: GuildMember) => {
     if (!member.voice.channel) return;
 
     const connection = await member.voice.channel.join();
@@ -107,27 +126,9 @@ export default class CommandRunner {
     logger.info(`COMMAND_RUNNER: Playing ${url} on VC:${member.voice.channel.name} as per command.`);
   };
 
-  public pingCommand = async (params: string, member: GuildMember, message: Message) => {
+  private pingCommand = async (params: string, member: GuildMember, message: Message) => {
     const botMessage = (await message.channel.send("Ping?")) as Message;
     await botMessage.edit(`Pong! Latency is ${botMessage.createdTimestamp - message.createdTimestamp}ms.`);
     logger.info(`COMMAND_RUNNER: Replied to PING on ${message.channel} as per command.`);
-  };
-
-  public runCommand = (command: string, parameters: string, member: GuildMember, message?: Message, user?: User) => {
-    logger.info(`COMMAND_RUNNER: Command: ${command}, parameters:${parameters}`);
-
-    // Find and execute the correct command
-    const commandMapping: ICommandTaskMapping = {
-      join: this.joinCommand,
-      leave: this.leaveCommand,
-      playurl: this.playURLCommand,
-      play: this.playCommand,
-      ping: this.pingCommand
-    };
-
-    const task = commandMapping[command];
-    if (!task) return;
-
-    return task(parameters, member, message, user);
   };
 }

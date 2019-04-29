@@ -4,6 +4,18 @@ VoiceBot is a discord bot that support voice commands.
 
 Invite the bot to your channel and then pronounce `{keyword} play {song name}` to play your favorite song!
 
+## Demo
+
+[![Demo](https://img.youtube.com/vi/vRwp--RoJdo/0.jpg)](https://www.youtube.com/watch?v=vRwp--RoJdo)
+
+Why `Terminator`? It seems to be the most consistently detected hotword.
+
+Why `Mozart`? It's not copyrighted.
+
+## How does this work
+
+Consult [my blog post](https://vagr9k.me/using-n-api-for-high-performance-voice-command-detection-in-discord) about the design decisions if you're interested.
+
 ## How to use
 
 NOTE: This project is in an alpha stage an relies on a native N-API module [native-voice-command-detector](https://github.com/Vagr9K/native-voice-command-detector) for high performance, multithreaded hotword detection and speech recognition. Consult [its documentation](https://github.com/Vagr9K/native-voice-command-detector#building) on how to build it.

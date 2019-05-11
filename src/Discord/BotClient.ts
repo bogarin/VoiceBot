@@ -4,7 +4,7 @@ import logger from "../utils/logger";
 
 class BotClient extends Discord.Client {
   public messageEventHandler: (message: Message) => Promise<void>;
-  constructor(token: string = config.DISCORD_BOT_TOKEN) {
+  public constructor(token: string = config.DISCORD_BOT_TOKEN) {
     super();
 
     this.token = token;
@@ -19,36 +19,48 @@ class BotClient extends Discord.Client {
   }
 
   // Event handlers
-  public onError = (error: Error) => {
-    logger.error(`BOT_CLIENT: Discord bot error: ${error.name}:${error.message}.`);
-  };
-
-  public onReady = () => {
-    logger.info(
-      `BOT_CLIENT: Bot has started, with ${this.users.size} users, in ${this.channels.size} channels of ${
-        this.guilds.size
-      } guilds.`
+  public onError = (error: Error): void => {
+    logger.error(
+      `BOT_CLIENT: Discord bot error: ${error.name}:${error.message}.`
     );
   };
 
-  public onGuildCreate = (guild: Guild) => {
+  public onReady = (): void => {
     logger.info(
-      `BOT_CLIENT: Added to guild: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members.`
+      `BOT_CLIENT: Bot has started, with ${this.users.size} users, in ${
+        this.channels.size
+      } channels of ${this.guilds.size} guilds.`
     );
   };
 
-  public onGuildDelete = (guild: Guild) => {
-    logger.info(`BOT_CLIENT: Removed from guild: ${guild.name} (id: ${guild.id})`);
+  public onGuildCreate = (guild: Guild): void => {
+    logger.info(
+      `BOT_CLIENT: Added to guild: ${guild.name} (id: ${
+        guild.id
+      }). This guild has ${guild.memberCount} members.`
+    );
   };
 
-  public onMessage = async (message: Message) => {
+  public onGuildDelete = (guild: Guild): void => {
+    logger.info(
+      `BOT_CLIENT: Removed from guild: ${guild.name} (id: ${guild.id})`
+    );
+  };
+
+  public onMessage = async (message: Message): Promise<void> => {
     // Ignore non-guild messages
-    if (!message.guild) return;
+    if (!message.guild) {
+      return;
+    }
 
     // Ignore bots
-    if (message.member.user.bot) return;
+    if (message.member.user.bot) {
+      return;
+    }
 
-    if (this.messageEventHandler) this.messageEventHandler(message);
+    if (this.messageEventHandler) {
+      this.messageEventHandler(message);
+    }
   };
 }
 

@@ -17,7 +17,13 @@ if (process.env.NODE_ENV !== "production") {
       format: format.combine(
         format.timestamp(),
         format.simple(),
-        format.printf(info => `${colorizer.colorize(info.level, `${info.timestamp} - ${info.level}: `)}${info.message}`)
+        format.printf(
+          (info): string =>
+            `${colorizer.colorize(
+              info.level,
+              `${info.timestamp} - ${info.level}: `
+            )}${info.message}`
+        )
       )
     })
   );

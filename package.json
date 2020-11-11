@@ -34,7 +34,7 @@
     "ytdl-core": "^0.29.3"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^1.8.0",
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/eslint-plugin-tslint": "^1.8.0",
     "@typescript-eslint/parser": "^1.8.0",
     "eslint": "^5.16.0",

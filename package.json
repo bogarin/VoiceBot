@@ -47,7 +47,7 @@
     "eslint-plugin-standard": "^4.0.0",
     "prettier": "^1.17.0",
     "rimraf": "^2.6.3",
-    "tslint": "^5.13.1",
+    "tslint": "^5.20.1",
     "tslint-config-prettier": "^1.18.0"
   },
   "resolutions": {
